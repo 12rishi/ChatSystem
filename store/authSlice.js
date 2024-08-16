@@ -76,6 +76,7 @@ export function postEdit(data, id) {
       });
       if (editReq.status === 200) {
         dispatch(setStatus(STATUS.SUCCESS));
+        dispatch(setData(editReq.data.data));
       } else {
         dispatch(setStatus(STATUS.ERROR));
       }

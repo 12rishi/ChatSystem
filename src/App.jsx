@@ -9,6 +9,7 @@ import Edit from "./components/profile/Edit";
 import Timer from "./components/Timer/Timer";
 import store from "../store/store";
 import { Provider } from "react-redux";
+import Message from "./components/message/Message";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Home />} />
             <Route path="/editProfile" element={<Edit />} />
+            <Route path="/message" element={<Message />} />
           </Routes>
         </BrowserRouter>
       </Provider>

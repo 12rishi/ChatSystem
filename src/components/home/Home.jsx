@@ -4,6 +4,7 @@ import Card from "../card/Card";
 import API from "../../httpInstance/axiosInstance";
 import { useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,8 @@ const Home = () => {
   const [userId, setUserId] = useState("");
   const [userData, setUserData] = useState([]);
   const [socketCon, setSocketCon] = useState(null);
+  const { data } = useSelector((store) => store.auth);
+  console.log(data);
 
   const id = searchParams.get("id");
   const server = "http://localhost:8000";
@@ -32,9 +35,6 @@ const Home = () => {
   useEffect(() => {
     const newCon = io(server);
     setSocketCon(newCon);
-    return () => {
-      newCon.disconnect();
-    };
   }, []);
   const handleClick = (dataId) => {
     socketCon.emit("liked", { userId, dataId });
@@ -44,7 +44,7 @@ const Home = () => {
   };
   return (
     <>
-      <Navbar id={id} />
+      <Navbar />
       {userData.map((datas) => {
         return <Card data={datas} onSubmit={handleClick} />;
       })}

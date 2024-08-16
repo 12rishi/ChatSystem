@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import io from "socket.io-client";
 
 const Card = ({ data, onSubmit }) => {
+  const { id } = useSelector((store) => store.auth);
   const handleClick = (dataId) => {
     onSubmit(dataId);
   };
@@ -34,7 +36,10 @@ const Card = ({ data, onSubmit }) => {
               >
                 Like :{data.likes}
               </button>
-              <Link className=" text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300">
+              <Link
+                to={`/message?id=${data.id}`}
+                className=" text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
+              >
                 Chat
               </Link>
             </p>
