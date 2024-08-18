@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { postLogin, setStatus } from "../../../store/authSlice";
 import STATUS from "../../../status/status";
 import { io } from "socket.io-client";
+const server = "http://localhost:8000";
+const socket = io.connect(server);
 
 const Login = () => {
   const [newCon, setNewCon] = useState(null);
@@ -14,13 +16,10 @@ const Login = () => {
   const dispatch = useDispatch();
   const { status, error, token, id } = useSelector((store) => store.auth);
   const onSubmit = async (data) => {
-    storeSocketId(data);
     dispatch(postLogin(data));
+    socket.emit("storeSocketId", data);
   };
-  const server = "http://localhost:8000";
-  function storeSocketId(data) {
-    newCon.emit("storeSocketId", data);
-  }
+
   useEffect(() => {
     if (status === STATUS.SUCCESS) {
       localStorage.setItem("jsonToken", token);
@@ -31,10 +30,7 @@ const Login = () => {
       alert(error);
     }
   }, [status]);
-  useEffect(() => {
-    const newSocket = io(server);
-    setNewCon(newSocket);
-  }, []);
+
   return <Form auth={"login"} onSubmit={onSubmit} />;
 };
 

@@ -35,6 +35,11 @@ const Home = () => {
   useEffect(() => {
     const newCon = io(server);
     setSocketCon(newCon);
+    return () => {
+      if (socketCon) {
+        socketCon.disconnect();
+      }
+    };
   }, []);
   const handleClick = (dataId) => {
     socketCon.emit("liked", { userId, dataId });

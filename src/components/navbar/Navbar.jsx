@@ -2,9 +2,18 @@
 
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom"; // If you're using React Router for navigation
+import { Link, useNavigate } from "react-router-dom"; // If you're using React Router for navigation
+import { persistor } from "../../../store/store";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("jsonToken");
+    localStorage.removeItem("authState");
+    persistor.purge();
+    navigate("/login");
+  };
   const { id } = useSelector((store) => store.auth);
   return (
     <nav className="bg-gray-800 p-4">
@@ -23,17 +32,13 @@ const Navbar = () => {
           >
             Edit Profile
           </Link>
-          <Link to="/logout">
-            {" "}
-            <button
-              onClick={() => {
-                // Handle logout logic here
-              }}
-              className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Logout
-            </button>
-          </Link>
+
+          <button
+            onClick={handleLogout}
+            className="text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </nav>

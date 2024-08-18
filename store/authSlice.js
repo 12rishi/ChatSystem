@@ -57,6 +57,7 @@ export function postLogin(data) {
         dispatch(setStatus(STATUS.SUCCESS));
         dispatch(setToken(loginReq?.data?.token));
         dispatch(setId(loginReq?.data?.data));
+        dispatch(setData(loginReq.data.data1));
       } else {
         dispatch(setStatus(STATUS.ERROR));
       }

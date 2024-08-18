@@ -8,7 +8,6 @@ const Message = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const [socketCon, setsocketCon] = useState();
   const receiverId = searchParams.get("id");
   const server = "http://localhost:8000";
 
@@ -18,8 +17,10 @@ const Message = () => {
 
   const { data, id } = useSelector((store) => store.auth);
   console.log(data);
+  const socket = io.connect(server);
   function sendMessage(message, id) {
-    socketCon.emit("sendMsg", { message: message, id: id });
+    socket.emit("storeSocketId", data);
+    socket.emit("sendMessage", { message, id });
   }
   const handleChange = (e) => {
     e.preventDefault();
@@ -31,11 +32,19 @@ const Message = () => {
     console.log(messages);
     console.log(message);
     sendMessage(message, receiverId);
+    console.log(data);
   };
   useEffect(() => {
-    const socket = io(server);
-    setsocketCon(socket);
-  }, []);
+    socket.on("receiveMessage", (data) => {
+      console.log(data);
+      setMessages((prevData) => [...prevData, data]);
+      return () => {
+        if (socket) {
+          socket.disconnect();
+        }
+      };
+    });
+  }, [socket, messages]);
 
   return (
     <>
@@ -55,9 +64,7 @@ const Message = () => {
           {/* Display each message */}
           {messages.map((msg, index) => (
             <div key={index} className="flex items-end mb-4 flex-row-reverse">
-              <div className="w-12 h-12 ml-4 rounded-full bg-center bg-cover">
-                <img src={data.profilePicture ? data.profilePicture : null} />
-              </div>
+              <div className="w-12 h-12 ml-4 rounded-full bg-center bg-cover"></div>
               <div className="max-w-lg p-4 bg-blue-500 text-white rounded-lg">
                 <div className="flex justify-between items-center mb-2">
                   <div className="font-bold">You</div>
@@ -69,25 +76,6 @@ const Message = () => {
               </div>
             </div>
           ))}
-
-          <div className="flex items-end mb-4 flex-row-reverse">
-            <div
-              className="w-12 h-12 ml-4 bg-gray-300 rounded-full bg-center bg-cover"
-              style={{
-                backgroundImage:
-                  "url('https://image.flaticon.com/icons/svg/145/145867.svg')",
-              }}
-            ></div>
-            <div className="max-w-lg p-4 bg-blue-500 text-white rounded-lg">
-              <div className="flex justify-between items-center mb-2">
-                <div className="font-bold">Sajad</div>
-                <div className="text-sm text-gray-200">
-                  {new Date().getHours() + ":" + new Date().getMinutes()}
-                </div>
-              </div>
-              <div>You can change your name in JS section!</div>
-            </div>
-          </div>
         </main>
 
         <form
